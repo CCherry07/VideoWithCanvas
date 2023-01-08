@@ -99,10 +99,9 @@ function App() {
   }, [palyType])
 
   function handlePaly(type: PalyType = 'default') {
-    console.log('video paly', videoRef.current);
+    setPalyType(type)
     if (!videoRef.current || !videoRef.current.paused) return;
     videoRef.current.play();
-    setPalyType(type)
   }
   function handlePause() {
     if (!videoRef.current || videoRef.current.paused) return;
