@@ -29,7 +29,7 @@ function App() {
   const canvasRef = useRef<HTMLCanvasElement>(null)
   const videoRef = useRef<HTMLVideoElement>(null)
   const [palyType, setPalyType] = useState<PalyType>()
-
+  const [dataURL, setDataURL] = useState<string>()
   const processor: Processor = {
     getColors: function getColors(ImageData: ImageData) {
       let data = ImageData.data
@@ -110,7 +110,7 @@ function App() {
       setCanvasCtx(context)
     }
   }, [])
-  type PalyType = 'invoke' | 'mosaic'
+  type PalyType = 'invoke' | 'mosaic' | 'default'
   const handleRequestAnimationFrame = () => {
     if (palyType === 'invoke') {
       processor.computeFrame(canvasCtx!, canvasRef.current!, videoRef.current!, {
@@ -128,7 +128,7 @@ function App() {
         y: 100,
       })
       requestAnimationFrame(handleRequestAnimationFrame)
-    } else {
+    } else if (palyType === 'default') {
       canvasCtx?.drawImage(videoRef.current!, 0, 0, canvasRef.current!.width, canvasRef.current!.height);
       requestAnimationFrame(handleRequestAnimationFrame)
     }
@@ -147,7 +147,7 @@ function App() {
     handleRequestAnimationFrame()
   }, [palyType])
 
-  function handlePaly(type?: PalyType) {
+  function handlePaly(type: PalyType = 'default') {
     console.log('video paly', videoRef.current);
     if (!videoRef.current || !videoRef.current.paused) return;
     videoRef.current.play();
@@ -156,6 +156,22 @@ function App() {
   function handlePause() {
     if (!videoRef.current || videoRef.current.paused) return;
     videoRef.current.pause();
+  }
+  function handleShot() {
+    if (!canvasRef.current) return;
+    const dataURL = canvasRef.current.toDataURL('image/png');
+    setDataURL(dataURL)
+  }
+
+  function handleShotDownload() {
+    if (!dataURL){
+      alert('请先截图')
+      return
+    };
+    const a = document.createElement('a')
+    a.href = dataURL!
+    a.download = `${new Date().getTime()}.png`
+    a.click()
   }
   return (
     <div className="App">
@@ -167,11 +183,14 @@ function App() {
         width="460"
         height="270"
       ></canvas>
+      {dataURL && <img src={dataURL} style={{ height: '290px', width: "460px" }} alt="" />}
       <div>
         <button onClick={() => handlePaly()}>播放</button>
         <button onClick={handlePause}>暂停</button>
         <button onClick={() => handlePaly('invoke')}>反色播放</button>
         <button onClick={() => handlePaly('mosaic')}>马赛克</button>
+        <button onClick={handleShot}>视频截图</button>
+        <button onClick={handleShotDownload}>下载截图</button>
       </div>
     </div>
   )
