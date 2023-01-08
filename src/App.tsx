@@ -75,7 +75,7 @@ function App() {
     if (palyType === 'invoke') {
       processor.computeFrame(canvasCtx!, canvasRef.current!, videoRef.current!, {
         width: 100,
-        height: 50,
+        height: 100,
         x: 100,
         y: 100,
       })
@@ -132,6 +132,7 @@ function App() {
         ref={canvasRef}
         width="460"
         height="270"
+        style={{ border: '1px dashed #375dcf'}}
       ></canvas>
       {dataURL && <img src={dataURL} style={{ height: '290px', width: "460px" }}  alt='视频截图'/>}
       <div>
