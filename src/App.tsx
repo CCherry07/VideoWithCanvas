@@ -4,18 +4,6 @@ import './App.css'
 interface Processor {
   computeFrame: (canvasCtx: CanvasRenderingContext2D, canvasRef: HTMLCanvasElement, videoRef: HTMLVideoElement, config: SizeProps) => void
   mosaic: (canvasCtx: CanvasRenderingContext2D, canvasRef: HTMLCanvasElement, videoRef: HTMLVideoElement, config: SizeProps) => void
-  getColors: (ImageData: ImageData) => {
-    r: number;
-    g: number;
-    b: number;
-    a: number;
-  }[]
-  setColors: (ImageData: ImageData, colors: {
-    r: number;
-    g: number;
-    b: number;
-    a: number;
-  }[]) => void
 }
 interface SizeProps {
   width: number
@@ -31,34 +19,6 @@ function App() {
   const [palyType, setPalyType] = useState<PalyType>()
   const [dataURL, setDataURL] = useState<string>()
   const processor: Processor = {
-    getColors: function getColors(ImageData: ImageData) {
-      let data = ImageData.data
-      let colors = []
-      for (var i = 0; i < data.length; i += 4) {
-        colors.push({
-          r: data[i],
-          g: data[i + 1],
-          b: data[i + 2],
-          a: data[i + 3],
-        })
-      }
-      return colors
-    },
-
-    setColors: function setColors(ImageData: ImageData, colors: {
-      r: number;
-      g: number;
-      b: number;
-      a: number;
-    }[]) {
-      let data = ImageData.data
-      colors.forEach((color, index) => {
-        data[index] = color.r
-        data[index + 1] = color.g
-        data[index + 2] = color.b
-        data[index + 3] = color.a
-      })
-    },
 
     computeFrame: function computeFrame(canvasCtx: CanvasRenderingContext2D, canvasRef: HTMLCanvasElement, videoRef: HTMLVideoElement, config: SizeProps) {
       const { x, y, width, height } = config
@@ -133,15 +93,6 @@ function App() {
       requestAnimationFrame(handleRequestAnimationFrame)
     }
   }
-  function setXY(obj: ImageData, x: number, y: number, colors: any[]) {
-    var { width } = obj
-    colors.forEach(color => {
-      obj.data[4 * (y * width + x)] = color['r']
-      obj.data[4 * (y * width + x) + 1] = color['g']
-      obj.data[4 * (y * width + x) + 2] = color['b']
-      obj.data[4 * (y * width + x) + 3] = color['a']
-    });
-  }
 
   useEffect(() => {
     handleRequestAnimationFrame()
@@ -164,7 +115,7 @@ function App() {
   }
 
   function handleShotDownload() {
-    if (!dataURL){
+    if (!dataURL) {
       alert('请先截图')
       return
     };
@@ -175,7 +126,7 @@ function App() {
   }
   return (
     <div className="App">
-      <video id="mse" ref={videoRef} autoPlay={true} playsInline controls={true}>
+      <video id="mse" ref={videoRef} loop autoPlay={true} playsInline>
         <source src={videoSrc} type="video/mp4"></source>
       </video>
       <canvas
@@ -183,7 +134,7 @@ function App() {
         width="460"
         height="270"
       ></canvas>
-      {dataURL && <img src={dataURL} style={{ height: '290px', width: "460px" }} alt="" />}
+      {dataURL && <img src={dataURL} style={{ height: '290px', width: "460px" }}  alt='视频截图'/>}
       <div>
         <button onClick={() => handlePaly()}>播放</button>
         <button onClick={handlePause}>暂停</button>
