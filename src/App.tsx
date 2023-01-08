@@ -166,7 +166,6 @@ function App() {
         ref={canvasRef}
         width="460"
         height="270"
-        style={{ border: '1px solid blue' }}
       ></canvas>
       <div>
         <button onClick={() => handlePaly()}>播放</button>
